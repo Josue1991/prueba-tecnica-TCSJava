@@ -41,6 +41,7 @@ public class ClienteServiceImpl implements IClienteService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public ClienteResponseDTO crearCliente(ClienteRequestDTO clienteDTO) {
         if (clienteRepository.existsByIdentificacion(clienteDTO.getIdentificacion())) {
             throw new DuplicateResourceException(
@@ -56,6 +57,7 @@ public class ClienteServiceImpl implements IClienteService {
 
     @Override
     @Transactional(readOnly = true)
+    @SuppressWarnings("null")
     public ClienteResponseDTO obtenerClientePorId(Long id) {
         Cliente cliente = clienteRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(
@@ -91,6 +93,7 @@ public class ClienteServiceImpl implements IClienteService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public ClienteResponseDTO actualizarCliente(Long id, ClienteRequestDTO clienteDTO) {
         Cliente cliente = clienteRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(
@@ -112,6 +115,7 @@ public class ClienteServiceImpl implements IClienteService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public void desactivarCliente(Long id) {
         Cliente cliente = clienteRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(
@@ -141,6 +145,7 @@ public class ClienteServiceImpl implements IClienteService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public void activarCliente(Long id) {
         Cliente cliente = clienteRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(
@@ -153,6 +158,7 @@ public class ClienteServiceImpl implements IClienteService {
     
     @Override
     @Transactional(readOnly = true)
+    @SuppressWarnings("null")
     public ClienteActivacionResponseDTO validarActivacionCliente(Long id) {
         Cliente cliente = clienteRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(
@@ -182,6 +188,7 @@ public class ClienteServiceImpl implements IClienteService {
     }
     
     @Override
+    @SuppressWarnings("null")
     public void activarClienteConCuentas(Long id, ClienteActivacionRequestDTO request) {
         Cliente cliente = clienteRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(

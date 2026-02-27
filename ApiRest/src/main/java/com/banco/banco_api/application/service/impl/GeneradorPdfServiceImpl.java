@@ -25,6 +25,7 @@ public class GeneradorPdfServiceImpl implements IGeneradorPdfService {
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     @Override
+    @SuppressWarnings("resource")
     public byte[] generarPdfMovimientosCliente(ReporteMovimientosClienteDTO reporte) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             PdfWriter writer = new PdfWriter(baos);
@@ -91,6 +92,7 @@ public class GeneradorPdfServiceImpl implements IGeneradorPdfService {
     }
 
     @Override
+    @SuppressWarnings("resource")
     public byte[] generarPdfMovimientosCuenta(ReporteMovimientosCuentaDTO reporte) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             PdfWriter writer = new PdfWriter(baos);
@@ -149,6 +151,7 @@ public class GeneradorPdfServiceImpl implements IGeneradorPdfService {
     }
 
     @Override
+    @SuppressWarnings("resource")
     public byte[] generarPdfCuentas(ReporteCuentasDTO reporte) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             PdfWriter writer = new PdfWriter(baos);

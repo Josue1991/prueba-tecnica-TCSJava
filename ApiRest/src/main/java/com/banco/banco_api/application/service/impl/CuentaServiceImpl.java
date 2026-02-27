@@ -40,6 +40,7 @@ public class CuentaServiceImpl implements ICuentaService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public CuentaResponseDTO crearCuenta(CuentaRequestDTO cuentaDTO) {
         if (cuentaRepository.existsByNumeroCuenta(cuentaDTO.getNumeroCuenta())) {
             throw new DuplicateResourceException(
@@ -66,6 +67,7 @@ public class CuentaServiceImpl implements ICuentaService {
 
     @Override
     @Transactional(readOnly = true)
+    @SuppressWarnings("null")
     public CuentaResponseDTO obtenerCuentaPorId(Long id) {
         Cuenta cuenta = cuentaRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(
@@ -95,6 +97,7 @@ public class CuentaServiceImpl implements ICuentaService {
 
     @Override
     @Transactional(readOnly = true)
+    @SuppressWarnings("null")
     public List<CuentaResponseDTO> obtenerCuentasPorCliente(Long clienteId) {
         if (!clienteRepository.existsById(clienteId)) {
             throw new ResourceNotFoundException(
@@ -141,6 +144,7 @@ public class CuentaServiceImpl implements ICuentaService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public void desactivarCuenta(Long id) {
         Cuenta cuenta = cuentaRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(
@@ -166,6 +170,7 @@ public class CuentaServiceImpl implements ICuentaService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public void activarCuenta(Long id) {
         Cuenta cuenta = cuentaRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(

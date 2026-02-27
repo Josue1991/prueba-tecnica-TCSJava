@@ -29,6 +29,7 @@ public class MovimientoService implements IMovimientoService {
 
     @Override
     @Transactional
+    @SuppressWarnings({"null", "incomplete-switch"})
     public MovimientosResponseDTO registrarMovimiento(MovimientosRequestDTO request) {
         
         Cuenta cuenta = cuentaRepository.findById(request.cuentaId())

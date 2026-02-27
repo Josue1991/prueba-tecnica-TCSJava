@@ -20,6 +20,7 @@ public class EmailServiceImpl implements IEmailService {
     }
 
     @Override
+    @SuppressWarnings({"null"})
     public void enviarCorreoConAdjunto(String destinatario, String asunto, String cuerpo,
                                       byte[] archivoAdjunto, String nombreArchivo, String tipoMime) {
         try {
@@ -37,7 +38,7 @@ public class EmailServiceImpl implements IEmailService {
                 tipoMime);
             
             mailSender.send(mensaje);
-        } catch (Exception e) {
+        } catch (Exception e) { // Manejo genérico de excepciones de JavaMail
             throw new RuntimeException("Error al enviar correo electrónico: " + e.getMessage(), e);
         }
     }

@@ -41,6 +41,7 @@ public class ReporteServiceImpl implements IReporteService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public ReporteMovimientosClienteDTO generarReporteMovimientosPorCliente(
             Long clienteId, LocalDate fechaInicio, LocalDate fechaFin) {
         
@@ -99,6 +100,7 @@ public class ReporteServiceImpl implements IReporteService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public ReporteMovimientosCuentaDTO generarReporteMovimientosPorCuenta(
             Long cuentaId, LocalDate fechaInicio, LocalDate fechaFin) {
         

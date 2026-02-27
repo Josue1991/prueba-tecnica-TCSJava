@@ -20,6 +20,7 @@ public class Cliente extends Persona {
     private LocalDateTime createdAt;
 
     @PrePersist
+    @Override
     protected void onCreate() {
         super.onCreate();
         createdAt = LocalDateTime.now();
@@ -59,6 +60,7 @@ public class Cliente extends Persona {
         this.deleted = deleted;
     }
 
+    @Override
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
