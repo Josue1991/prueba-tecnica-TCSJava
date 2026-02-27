@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { CuentaService } from './cuenta.service';
 import { Cuenta, CuentaRequest, TipoCuenta } from '../models/cuenta.model';
 
@@ -27,8 +28,11 @@ describe('CuentaService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [CuentaService]
+      providers: [
+        CuentaService,
+        provideHttpClient(),
+        provideHttpClientTesting()
+      ]
     });
     service = TestBed.inject(CuentaService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -41,7 +45,7 @@ describe('CuentaService', () => {
   it('crearCuenta: realiza POST a /cuentas con el body correcto', () => {
     service.crearCuenta(mockRequest).subscribe(res => {
       expect(res.numeroCuenta).toBe('5520366226');
-      expect(res.estado).toBeTrue();
+      expect(res.estado).toBe(true);
     });
 
     const req = httpMock.expectOne(API);

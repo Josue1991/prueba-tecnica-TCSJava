@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { ClienteService } from './cliente.service';
 import {
   Cliente,
@@ -36,8 +37,11 @@ describe('ClienteService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [ClienteService]
+      providers: [
+        ClienteService,
+        provideHttpClient(),
+        provideHttpClientTesting()
+      ]
     });
     service = TestBed.inject(ClienteService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -140,7 +144,7 @@ describe('ClienteService', () => {
     };
 
     service.validarActivacion(1).subscribe(res => {
-      expect(res.clienteActivo).toBeFalse();
+      expect(res.clienteActivo).toBe(false);
       expect(res.cuentas.length).toBe(1);
     });
 
