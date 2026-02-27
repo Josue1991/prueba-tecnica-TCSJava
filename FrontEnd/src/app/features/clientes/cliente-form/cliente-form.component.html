@@ -1,0 +1,112 @@
+<div class="form-container">
+  <div class="form-row">
+    <div class="form-group">
+      <label for="nombre">Nombre *</label>
+      <input 
+        type="text" 
+        id="nombre" 
+        class="form-input"
+        [(ngModel)]="formData.nombre"
+        (ngModelChange)="onInputChange()"
+        placeholder="Ingrese el nombre"
+        required>
+    </div>
+
+    <div class="form-group">
+      <label for="genero">Género *</label>
+      <select
+        id="genero"
+        class="form-input"
+        [(ngModel)]="formData.genero"
+        (ngModelChange)="onInputChange()"
+        required>
+        <option value="">Seleccione un género</option>
+        <option value="Masculino">Masculino</option>
+        <option value="Femenino">Femenino</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="edad">Edad *</label>
+      <input 
+        type="number" 
+        id="edad" 
+        class="form-input"
+        [(ngModel)]="formData.edad"
+        (ngModelChange)="onInputChange()"
+        placeholder="Ingrese la edad"
+        min="1"
+        required>
+    </div>
+
+    <div class="form-group">
+      <label for="identificacion">Documento de Identidad *</label>
+      <input 
+        type="text" 
+        id="identificacion" 
+        class="form-input"
+        [(ngModel)]="formData.identificacion"
+        (ngModelChange)="onInputChange()"
+        placeholder="Ej: 12345678A"
+        [disabled]="modoEdicion"
+        required>
+      <small *ngIf="modoEdicion" class="form-hint">
+        <i class="fa-solid fa-lock"></i> El documento de identidad no se puede modificar
+      </small>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="direccion">Dirección *</label>
+      <input 
+        type="text" 
+        id="direccion" 
+        class="form-input"
+        [(ngModel)]="formData.direccion"
+        (ngModelChange)="onInputChange()"
+        placeholder="Ingrese la dirección"
+        required>
+      <small *ngIf="formData.direccion && !isValidDireccion(formData.direccion)" class="form-error">
+        <i class="fa-solid fa-exclamation-circle"></i> Dirección no válida
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label for="telefono">Teléfono</label>
+      <input 
+        type="tel" 
+        id="telefono" 
+        class="form-input"
+        [(ngModel)]="formData.telefono"
+        (ngModelChange)="onInputChange()"
+        placeholder="Ej: +34 123 456 789">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="password">Contraseña *</label>
+    <input 
+      type="password" 
+      id="password" 
+      class="form-input"
+      [(ngModel)]="formData.password"
+      (ngModelChange)="onInputChange()"
+      placeholder="Mínimo 6 caracteres"
+      required>
+    <small *ngIf="formData.password && formData.password.length < 6" class="form-error">
+      <i class="fa-solid fa-exclamation-circle"></i> La contraseña debe tener al menos 6 caracteres
+    </small>
+    <small *ngIf="modoEdicion" class="form-hint">
+      <i class="fa-solid fa-info-circle"></i> Ingrese una nueva contraseña para actualizarla
+    </small>
+  </div>
+
+  <div class="form-note">
+    <i class="fa-solid fa-info-circle"></i>
+    Los campos marcados con * son obligatorios
+  </div>
+</div>

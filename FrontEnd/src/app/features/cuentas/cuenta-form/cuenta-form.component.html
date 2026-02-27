@@ -1,0 +1,65 @@
+<div class="form-container">
+  <div class="form-group">
+    <label for="numeroCuenta">Número de Cuenta *</label>
+    <input 
+      type="text" 
+      id="numeroCuenta" 
+      class="form-input"
+      [(ngModel)]="formData.numeroCuenta"
+      (ngModelChange)="onInputChange()"
+      placeholder="Ej: ES1234567890123456789012"
+      [disabled]="modoEdicion"
+      required>
+    <small *ngIf="modoEdicion" class="form-hint">
+      <i class="fa-solid fa-lock"></i> El número de cuenta no se puede modificar
+    </small>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="tipoCuenta">Tipo de Cuenta *</label>
+      <select 
+        id="tipoCuenta" 
+        class="form-select"
+        [(ngModel)]="formData.tipoCuenta"
+        (ngModelChange)="onInputChange()"
+        required>
+        <option *ngFor="let tipo of tiposCuenta" [value]="tipo">
+          {{ tipo }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="clienteId">Cliente *</label>
+      <select 
+        id="clienteId" 
+        class="form-select"
+        [(ngModel)]="formData.clienteId"
+        (ngModelChange)="onInputChange()"
+        [disabled]="modoEdicion"
+        required>
+        <option [value]="0">Seleccione un cliente</option>
+        <option *ngFor="let cliente of clientes" [value]="cliente.id">
+          {{ cliente.nombre }} - {{ cliente.identificacion }}
+        </option>
+      </select>
+      <small *ngIf="modoEdicion" class="form-hint">
+        <i class="fa-solid fa-lock"></i> El cliente no se puede cambiar una vez creada la cuenta
+      </small>
+    </div>
+  </div>
+
+  <div class="form-note">
+    <i class="fa-solid fa-info-circle"></i>
+    Los campos marcados con * son obligatorios
+  </div>
+
+  <div class="info-box">
+    <i class="fa-solid fa-lightbulb"></i>
+    <div>
+      <strong>Nota:</strong> La cuenta se creará con saldo inicial de $0.00 y en estado activo.
+      Podrás realizar depósitos y retiros una vez creada la cuenta.
+    </div>
+  </div>
+</div>
