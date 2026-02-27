@@ -1,0 +1,43 @@
+<div *ngIf="isOpen" class="modal-overlay" (click)="handleOverlayClick($event)">
+  <div [class]="'modal-container modal-' + size" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h3 class="modal-title">
+        <i class="fa-solid fa-file-lines title-icon"></i>
+        {{ title }}
+      </h3>
+      <button 
+        class="btn-close" 
+        (click)="handleCancel()"
+        [disabled]="loading"
+        title="Cerrar">
+        <i class="fa-solid fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body (Contenido proyectado) -->
+    <div class="modal-body">
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Modal Footer -->
+    <div *ngIf="showFooter" class="modal-footer">
+      <button 
+        class="btn btn-cancel" 
+        (click)="handleCancel()"
+        [disabled]="loading">
+        <i [class]="cancelButtonIcon"></i>
+        {{ cancelButtonLabel }}
+      </button>
+      
+      <button 
+        class="btn btn-save" 
+        (click)="handleSave()"
+        [disabled]="disableSave || loading">
+        <i *ngIf="!loading" [class]="saveButtonIcon"></i>
+        <i *ngIf="loading" class="fa-solid fa-spinner fa-spin"></i>
+        {{ loading ? 'Guardando...' : saveButtonLabel }}
+      </button>
+    </div>
+  </div>
+</div>

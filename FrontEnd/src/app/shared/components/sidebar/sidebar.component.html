@@ -1,0 +1,34 @@
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <div class="sidebar-header">
+    <div class="logo">
+      <i class="logo-icon fa-solid fa-building-columns"></i>
+      <span class="logo-text" *ngIf="!isCollapsed">Banco App</span>
+    </div>
+    <button class="toggle-btn" (click)="toggleSidebar()" [attr.aria-label]="isCollapsed ? 'Expandir menú' : 'Contraer menú'">
+      <i [class]="isCollapsed ? 'fa-solid fa-angles-right' : 'fa-solid fa-angles-left'"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul class="menu-list">
+      <li *ngFor="let item of menuItems" class="menu-item">
+        <a 
+          [routerLink]="item.route" 
+          routerLinkActive="active" 
+          [routerLinkActiveOptions]="{exact: item.route === '/'}"
+          class="menu-link"
+          [title]="item.label">
+          <i [class]="'menu-icon ' + item.icon"></i>
+          <span class="menu-label" *ngIf="!isCollapsed">{{ item.label }}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer" *ngIf="!isCollapsed">
+    <div class="user-info">
+      <i class="user-icon fa-solid fa-user-circle"></i>
+      <span class="user-name">Usuario</span>
+    </div>
+  </div>
+</aside>

@@ -1,0 +1,126 @@
+<div class="table-wrapper">
+  <!-- Header con título -->
+  <div class="table-header">
+    <h2 *ngIf="config.title">{{ config.title }}</h2>
+    
+    <!-- Búsqueda y acciones debajo del título -->
+    <div class="header-actions">
+      <!-- Campo de búsqueda -->
+      <div *ngIf="config.searchable" class="search-box">
+        <i class="fa-solid fa-search search-icon"></i>
+        <input 
+          type="text" 
+          class="search-input"
+          [placeholder]="config.searchPlaceholder || 'Buscar...'"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch(searchTerm)">
+        <i *ngIf="searchTerm" 
+           class="fa-solid fa-times clear-icon" 
+           (click)="searchTerm = ''; onSearch('')"
+           title="Limpiar búsqueda"></i>
+      </div>
+      
+      <button 
+        *ngIf="config.showCreateButton" 
+        class="btn-create"
+        (click)="handleCreate()">
+        <i class="fa-solid fa-plus"></i>
+        {{ config.createButtonLabel || 'Crear Nuevo' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading">
+    <i class="fa-solid fa-spinner fa-spin"></i> Cargando...
+  </div>
+  
+  <!-- Error state -->
+  <div *ngIf="error" class="error">
+    <i class="fa-solid fa-exclamation-circle"></i> {{ error }}
+  </div>
+  
+  <!-- Tabla con datos -->
+  <div *ngIf="!loading && !error" class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th *ngFor="let column of config.columns">{{ column.label }}</th>
+          <th *ngIf="config.actions && config.actions.length > 0">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of displayedData">
+          <td *ngFor="let column of config.columns">
+            <span *ngIf="column.type !== 'badge'">
+              {{ formatValue(getValue(item, column.key), column) }}
+            </span>
+            <span 
+              *ngIf="column.type === 'badge'" 
+              [class]="'badge ' + getBadgeClass(getValue(item, column.key), column)">
+              {{ getBadgeLabel(getValue(item, column.key), column) }}
+            </span>
+          </td>
+          <td *ngIf="config.actions && config.actions.length > 0" class="actions-cell">
+            <button 
+              *ngFor="let action of config.actions"
+              [class]="'btn-action ' + (action.class || '')"
+              (click)="handleAction(action.action, item)"
+              [title]="action.label">
+              <i *ngIf="action.icon" [class]="action.icon"></i>
+              <span *ngIf="!action.icon">{{ action.label }}</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Empty state -->
+    <div *ngIf="displayedData.length === 0" class="no-data">
+      <i class="fa-solid fa-inbox"></i>
+      <p>{{ noDataMessage }}</p>
+    </div>
+
+    <!-- Paginación -->
+    <div *ngIf="config.pageable && filteredData.length > 0" class="pagination">
+      <div class="pagination-info">
+        <span>Mostrando {{ getDisplayRange() }}</span>
+        
+        <div class="page-size-selector">
+          <label>Elementos por página:</label>
+          <select [(ngModel)]="pageSize" (change)="onPageSizeChange(pageSize)">
+            <option *ngFor="let size of config.pageSizeOptions || [5, 10, 25, 50]" [value]="size">
+              {{ size }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pagination-controls">
+        <button 
+          class="page-btn"
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(currentPage - 1)">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <button 
+          *ngFor="let page of getPageNumbers()"
+          [class.active]="page === currentPage"
+          [class.ellipsis]="page === -1"
+          [disabled]="page === -1"
+          class="page-btn"
+          (click)="onPageChange(page)">
+          {{ page === -1 ? '...' : page }}
+        </button>
+
+        <button 
+          class="page-btn"
+          [disabled]="currentPage === totalPages"
+          (click)="onPageChange(currentPage + 1)">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
