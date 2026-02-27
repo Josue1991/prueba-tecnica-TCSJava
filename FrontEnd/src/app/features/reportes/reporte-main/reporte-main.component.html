@@ -1,0 +1,177 @@
+<div class="reportes-container">
+  <div class="header">
+    <h1><i class="fa-solid fa-chart-line"></i> Reportes</h1>
+  </div>
+
+  <!-- Selector de tipo de reporte -->
+  <div class="report-type-selector">
+    <button 
+      [class.active]="tipoReporte === 'general'"
+      (click)="cambiarTipoReporte('general')">
+      <i class="fa-solid fa-globe"></i> General
+    </button>
+    <button 
+      [class.active]="tipoReporte === 'cliente'"
+      (click)="cambiarTipoReporte('cliente')">
+      <i class="fa-solid fa-user"></i> Por Cliente
+    </button>
+    <button 
+      [class.active]="tipoReporte === 'cuenta'"
+      (click)="cambiarTipoReporte('cuenta')">
+      <i class="fa-solid fa-credit-card"></i> Por Cuenta
+    </button>
+  </div>
+
+  <!-- Mensajes -->
+  <div *ngIf="mensaje" class="success-message">
+    <i class="fa-solid fa-check-circle"></i> {{ mensaje }}
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <i class="fa-solid fa-exclamation-circle"></i> {{ error }}
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-card">
+    <h3><i class="fa-solid fa-sliders"></i> Configuración del Reporte</h3>
+
+    <div class="filter-row">
+      <!-- Selector de cliente (solo si tipo es cliente) -->
+      <div class="filter-group" *ngIf="tipoReporte === 'cliente'">
+        <label for="clienteSelect">Cliente:</label>
+        <select id="clienteSelect" class="form-select" [(ngModel)]="clienteSeleccionado">
+          <option [value]="null">Seleccione un cliente</option>
+          <option *ngFor="let cliente of clientes" [value]="cliente.id">
+            {{ cliente.nombre }} - {{ cliente.identificacion }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Selector de cuenta (solo si tipo es cuenta) -->
+      <div class="filter-group" *ngIf="tipoReporte === 'cuenta'">
+        <label for="cuentaSelect">Cuenta:</label>
+        <select id="cuentaSelect" class="form-select" [(ngModel)]="cuentaSeleccionada">
+          <option [value]="null">Seleccione una cuenta</option>
+          <option *ngFor="let cuenta of cuentas" [value]="cuenta.id">
+            {{ cuenta.numeroCuenta }} - {{ cuenta.nombreCliente }} ({{ cuenta.tipoCuenta }})
+          </option>
+        </select>
+      </div>
+
+      <!-- Rango de fechas -->
+      <div class="filter-group">
+        <label for="fechaInicio">Fecha Inicio:</label>
+        <input type="date" id="fechaInicio" class="form-input" [(ngModel)]="fechaInicio">
+      </div>
+
+      <div class="filter-group">
+        <label for="fechaFin">Fecha Fin:</label>
+        <input type="date" id="fechaFin" class="form-input" [(ngModel)]="fechaFin">
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones -->
+  <div class="actions-card">
+    <h3><i class="fa-solid fa-file-export"></i> Generar y Exportar</h3>
+
+    <div class="action-buttons">
+      <button class="btn btn-json" (click)="generarReporteJSON()" [disabled]="loading">
+        <i class="fa-solid fa-table"></i> Ver Datos
+      </button>
+      <button class="btn btn-pdf" (click)="descargarPDF()" [disabled]="loading">
+        <i class="fa-solid fa-file-pdf"></i> Descargar PDF
+      </button>
+      <button class="btn btn-excel" (click)="descargarExcel()" [disabled]="loading">
+        <i class="fa-solid fa-file-excel"></i> Descargar Excel
+      </button>
+      <button class="btn btn-email" (click)="abrirFormularioEmail()" [disabled]="loading">
+        <i class="fa-solid fa-envelope"></i> Enviar por Email
+      </button>
+    </div>
+
+    <!-- Loading indicator -->
+    <div *ngIf="loading" class="loading-inline">
+      <i class="fa-solid fa-spinner fa-spin"></i> Procesando...
+    </div>
+  </div>
+
+  <!-- Preview Datos en Tabla -->
+  <div *ngIf="mostrarPreview && tableConfig" class="preview-card">
+    <div class="preview-header">
+      <h3><i class="fa-solid fa-eye"></i> Vista Previa del Reporte</h3>
+      <button class="btn-close" (click)="cerrarPreview()">
+        <i class="fa-solid fa-times"></i>
+      </button>
+    </div>
+    <div class="preview-content">
+      <app-generic-table
+        [config]="tableConfig"
+        [data]="tableData"
+        [loading]="false"
+        [noDataMessage]="'No hay datos para mostrar en este reporte'">
+      </app-generic-table>
+    </div>
+  </div>
+
+  <!-- Formulario de Email (Modal) -->
+  <div *ngIf="mostrarFormularioEmail" class="modal-overlay" (click)="cerrarFormularioEmail()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-envelope"></i> Enviar Reporte por Email</h3>
+        <button class="btn-close" (click)="cerrarFormularioEmail()">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="emailDestinatario">Email Destinatario: *</label>
+          <input 
+            type="email" 
+            id="emailDestinatario" 
+            class="form-input" 
+            [(ngModel)]="emailDestinatario"
+            placeholder="ejemplo@correo.com">
+        </div>
+
+        <div class="form-group">
+          <label for="formatoEmail">Formato: *</label>
+          <select id="formatoEmail" class="form-select" [(ngModel)]="formatoEmail">
+            <option value="pdf">PDF</option>
+            <option value="excel">Excel</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="emailAsunto">Asunto: *</label>
+          <input 
+            type="text" 
+            id="emailAsunto" 
+            class="form-input" 
+            [(ngModel)]="emailAsunto"
+            placeholder="Asunto del correo">
+        </div>
+
+        <div class="form-group">
+          <label for="emailMensaje">Mensaje Adicional:</label>
+          <textarea 
+            id="emailMensaje" 
+            class="form-textarea" 
+            [(ngModel)]="emailMensaje"
+            placeholder="Mensaje opcional para incluir en el email"
+            rows="4"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="cerrarFormularioEmail()">
+          <i class="fa-solid fa-times"></i> Cancelar
+        </button>
+        <button class="btn btn-primary" (click)="enviarEmail()" [disabled]="loading">
+          <i class="fa-solid fa-paper-plane"></i> Enviar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

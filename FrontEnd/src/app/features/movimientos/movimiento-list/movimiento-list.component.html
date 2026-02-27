@@ -1,0 +1,65 @@
+<div class="movimientos-container">
+  <!-- Filtros -->
+  <div class="filters-card">
+    <h3><i class="fa-solid fa-filter"></i> Filtros</h3>
+
+    <div class="filter-row">
+      <div class="filter-group">
+        <label for="filtroTipo">Filtrar por:</label>
+        <select id="filtroTipo" [(ngModel)]="filtroTipo" class="form-select">
+          <option value="todos">Todos los movimientos</option>
+          <option value="cliente">Por cliente</option>
+          <option value="cuenta">Por cuenta</option>
+        </select>
+      </div>
+
+      <div class="filter-group" *ngIf="filtroTipo === 'cliente'">
+        <label for="clienteSelect">Cliente:</label>
+        <select id="clienteSelect" [(ngModel)]="clienteSeleccionado" class="form-select">
+          <option [value]="null">Seleccione un cliente</option>
+          <option *ngFor="let cliente of clientes" [value]="cliente.id">
+            {{ cliente.nombre }} - {{ cliente.identificacion }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group" *ngIf="filtroTipo === 'cuenta'">
+        <label for="cuentaSelect">Cuenta:</label>
+        <select id="cuentaSelect" [(ngModel)]="cuentaSeleccionada" class="form-select">
+          <option [value]="null">Seleccione una cuenta</option>
+          <option *ngFor="let cuenta of cuentas" [value]="cuenta.id">
+            {{ cuenta.numeroCuenta }} - {{ cuenta.nombreCliente }} ({{ cuenta.tipoCuenta }})
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group" *ngIf="filtroTipo !== 'todos'">
+        <label for="fechaInicio">Fecha inicio:</label>
+        <input type="date" id="fechaInicio" [(ngModel)]="fechaInicio" class="form-input">
+      </div>
+
+      <div class="filter-group" *ngIf="filtroTipo !== 'todos'">
+        <label for="fechaFin">Fecha fin:</label>
+        <input type="date" id="fechaFin" [(ngModel)]="fechaFin" class="form-input">
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn btn-primary" (click)="aplicarFiltros()">
+          <i class="fa-solid fa-search"></i> Buscar
+        </button>
+        <button class="btn btn-secondary" (click)="limpiarFiltros()">
+          <i class="fa-solid fa-eraser"></i> Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla genérica de movimientos -->
+  <app-generic-table
+    [config]="tableConfig"
+    [data]="movimientos"
+    [loading]="loading"
+    [error]="error"
+    [noDataMessage]="'No hay movimientos para mostrar'">
+  </app-generic-table>
+</div>

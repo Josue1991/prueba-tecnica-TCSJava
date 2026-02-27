@@ -1,0 +1,33 @@
+<div class="clientes-container">
+  <!-- Tabla de clientes -->
+  <app-generic-table
+    [config]="tableConfig"
+    [data]="clientes"
+    [loading]="loading"
+    [error]="error"
+    [noDataMessage]="'No hay clientes registrados'"
+    (onCreate)="handleCreate()"
+    (onAction)="handleAction($event)">
+  </app-generic-table>
+
+  <!-- Modal para crear/editar cliente -->
+  <app-generic-modal
+    [isOpen]="modalAbierto"
+    [title]="modoEdicion ? 'Editar Cliente' : 'Nuevo Cliente'"
+    [size]="'medium'"
+    [saveButtonLabel]="modoEdicion ? 'Actualizar' : 'Crear Cliente'"
+    [saveButtonIcon]="modoEdicion ? 'fa-solid fa-save' : 'fa-solid fa-user-plus'"
+    [disableSave]="!formularioValido_"
+    [loading]="guardando"
+    (onSave)="guardarCliente()"
+    (onCancel)="cerrarModal()"
+    (onClose)="cerrarModal()">
+    
+    <app-cliente-form
+      [clienteData]="clienteForm"
+      [modoEdicion]="modoEdicion"
+      (onFormChange)="onFormChange($event)"
+      (onValidChange)="onValidChange($event)">
+    </app-cliente-form>
+  </app-generic-modal>
+</div>

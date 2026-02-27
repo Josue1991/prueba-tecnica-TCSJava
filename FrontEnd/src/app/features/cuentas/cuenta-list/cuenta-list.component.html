@@ -1,0 +1,34 @@
+<div class="cuentas-container">
+  <!-- Tabla de cuentas -->
+  <app-generic-table
+    [config]="tableConfig"
+    [data]="cuentas"
+    [loading]="loading"
+    [error]="error"
+    [noDataMessage]="'No hay cuentas registradas'"
+    (onCreate)="handleCreate()"
+    (onAction)="handleAction($event)">
+  </app-generic-table>
+
+  <!-- Modal para crear cuenta -->
+  <app-generic-modal
+    [isOpen]="modalAbierto"
+    [title]="'Nueva Cuenta'"
+    [size]="'medium'"
+    [saveButtonLabel]="'Crear Cuenta'"
+    [saveButtonIcon]="'fa-solid fa-credit-card'"
+    [disableSave]="!formularioValido_"
+    [loading]="guardando"
+    (onSave)="guardarCuenta()"
+    (onCancel)="cerrarModal()"
+    (onClose)="cerrarModal()">
+    
+    <app-cuenta-form
+      [cuentaData]="cuentaForm"
+      [clientes]="clientes"
+      [modoEdicion]="modoEdicion"
+      (onFormChange)="onFormChange($event)"
+      (onValidChange)="onValidChange($event)">
+    </app-cuenta-form>
+  </app-generic-modal>
+</div>
