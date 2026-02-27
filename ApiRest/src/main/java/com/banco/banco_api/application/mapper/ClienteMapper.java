@@ -43,7 +43,6 @@ public class ClienteMapper {
             entity.getDireccion(),
             entity.getTelefono(),
             entity.getEstado(),
-            entity.getDeleted(),
             entity.getCreatedAt()
         );
     }

@@ -18,6 +18,7 @@ import com.banco.banco_api.application.service.IMovimientoService;
 import com.banco.banco_api.application.dto.MovimientosRequestDTO;
 import com.banco.banco_api.application.dto.MovimientosResponseDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -85,6 +86,107 @@ public class MovimientoController {
             @PathVariable Long cuentaId) {
 
         List<MovimientosResponseDTO> movimientos = movimientoService.obtenerMovimientosPorCuenta(cuentaId);
+        return ResponseEntity.ok(movimientos);
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+        summary = "Obtener todos los movimientos", 
+        description = "Obtiene la lista completa de todos los movimientos registrados en el sistema, ordenados por fecha"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200", 
+            description = "Lista de movimientos obtenida exitosamente",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = MovimientosResponseDTO.class)
+            )
+        )
+    })
+    public ResponseEntity<List<MovimientosResponseDTO>> obtenerTodosLosMovimientos() {
+        List<MovimientosResponseDTO> movimientos = movimientoService.obtenerTodosLosMovimientos();
+        return ResponseEntity.ok(movimientos);
+    }
+
+    @GetMapping(value = "/cliente/{clienteId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+        summary = "Obtener movimientos por cliente", 
+        description = "Obtiene la lista de todos los movimientos de todas las cuentas pertenecientes a un cliente específico"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200", 
+            description = "Lista de movimientos obtenida exitosamente",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = MovimientosResponseDTO.class)
+            )
+        )
+    })
+    public ResponseEntity<List<MovimientosResponseDTO>> obtenerMovimientosPorCliente(
+            @Parameter(description = "ID del cliente", example = "1", required = true) 
+            @PathVariable Long clienteId) {
+
+        List<MovimientosResponseDTO> movimientos = movimientoService.obtenerMovimientosPorCliente(clienteId);
+        return ResponseEntity.ok(movimientos);
+    }
+
+    @GetMapping(value = "/cuenta/{cuentaId}/rango", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+        summary = "Obtener movimientos por cuenta y rango de fechas", 
+        description = "Obtiene los movimientos de una cuenta específica filtrados por rango de fechas"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200", 
+            description = "Lista de movimientos obtenida exitosamente",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = MovimientosResponseDTO.class)
+            )
+        )
+    })
+    public ResponseEntity<List<MovimientosResponseDTO>> obtenerMovimientosPorCuentaYFechas(
+            @Parameter(description = "ID de la cuenta bancaria", example = "1", required = true) 
+            @PathVariable Long cuentaId,
+            @Parameter(description = "Fecha de inicio (formato: YYYY-MM-DD)", example = "2026-01-01", required = true)
+            @RequestParam String fechaInicio,
+            @Parameter(description = "Fecha de fin (formato: YYYY-MM-DD)", example = "2026-12-31", required = true)
+            @RequestParam String fechaFin) {
+
+        LocalDate inicio = LocalDate.parse(fechaInicio);
+        LocalDate fin = LocalDate.parse(fechaFin);
+        List<MovimientosResponseDTO> movimientos = movimientoService.obtenerMovimientosPorCuentaYFechas(cuentaId, inicio, fin);
+        return ResponseEntity.ok(movimientos);
+    }
+
+    @GetMapping(value = "/cliente/{clienteId}/rango", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+        summary = "Obtener movimientos por cliente y rango de fechas", 
+        description = "Obtiene los movimientos de todas las cuentas de un cliente filtrados por rango de fechas"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200", 
+            description = "Lista de movimientos obtenida exitosamente",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = MovimientosResponseDTO.class)
+            )
+        )
+    })
+    public ResponseEntity<List<MovimientosResponseDTO>> obtenerMovimientosPorClienteYFechas(
+            @Parameter(description = "ID del cliente", example = "1", required = true) 
+            @PathVariable Long clienteId,
+            @Parameter(description = "Fecha de inicio (formato: YYYY-MM-DD)", example = "2026-01-01", required = true)
+            @RequestParam String fechaInicio,
+            @Parameter(description = "Fecha de fin (formato: YYYY-MM-DD)", example = "2026-12-31", required = true)
+            @RequestParam String fechaFin) {
+
+        LocalDate inicio = LocalDate.parse(fechaInicio);
+        LocalDate fin = LocalDate.parse(fechaFin);
+        List<MovimientosResponseDTO> movimientos = movimientoService.obtenerMovimientosPorClienteYFechas(clienteId, inicio, fin);
         return ResponseEntity.ok(movimientos);
     }
 }

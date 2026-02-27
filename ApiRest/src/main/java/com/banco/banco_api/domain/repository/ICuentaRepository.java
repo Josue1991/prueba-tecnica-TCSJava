@@ -17,7 +17,5 @@ public interface ICuentaRepository extends JpaRepository<Cuenta, Long> {
 
     List<Cuenta> findByEstadoTrue();
 
-    List<Cuenta> findByDeletedFalse();
-
     boolean existsByNumeroCuenta(String numeroCuenta);
 }

@@ -15,6 +15,13 @@ public interface IMovimientoRepository extends JpaRepository<Movimiento, Long> {
     
     List<Movimiento> findByCuentaId(Long cuentaId);
     
+    @Query("SELECT m FROM Movimiento m WHERE m.cuenta.cliente.id = :clienteId " +
+           "ORDER BY m.fechaMovimiento DESC")
+    List<Movimiento> findByCuentaClienteId(@Param("clienteId") Long clienteId);
+    
+    @Query("SELECT m FROM Movimiento m ORDER BY m.fechaMovimiento DESC")
+    List<Movimiento> findAllOrdered();
+    
     @Query("SELECT m FROM Movimiento m WHERE m.cuenta.id = :cuentaId " +
            "AND m.fechaMovimiento >= :fechaInicio AND m.fechaMovimiento <= :fechaFin " +
            "ORDER BY m.fechaMovimiento ASC")

@@ -81,7 +81,7 @@ public class ClienteServiceImpl implements IClienteService {
     @Override
     @Transactional(readOnly = true)
     public List<ClienteResponseDTO> obtenerTodosLosClientes() {
-        List<Cliente> clientes = clienteRepository.findByDeletedFalse();
+        List<Cliente> clientes = clienteRepository.findAll();
         return clienteMapper.toResponseDTOList(clientes);
     }
 
@@ -124,7 +124,7 @@ public class ClienteServiceImpl implements IClienteService {
         
         // Obtener todas las cuentas activas del cliente
         List<Cuenta> cuentasActivas = cuentaRepository.findByClienteId(id).stream()
-            .filter(c -> c.getEstado() && !c.getDeleted())
+            .filter(c -> c.getEstado())
             .toList();
         
         // Desactivar cada cuenta activa y generar movimiento
@@ -165,10 +165,8 @@ public class ClienteServiceImpl implements IClienteService {
                 "Cliente no encontrado con ID: " + id
             ));
         
-        // Obtener todas las cuentas del cliente (activas e inactivas, pero no eliminadas)
-        List<Cuenta> cuentas = cuentaRepository.findByClienteId(id).stream()
-            .filter(c -> !c.getDeleted())
-            .toList();
+        // Obtener todas las cuentas del cliente (activas e inactivas)
+        List<Cuenta> cuentas = cuentaRepository.findByClienteId(id);
         
         List<ClienteActivacionResponseDTO.CuentaInfo> cuentasInfo = cuentas.stream()
             .map(c -> new ClienteActivacionResponseDTO.CuentaInfo(
@@ -176,7 +174,7 @@ public class ClienteServiceImpl implements IClienteService {
                 c.getNumeroCuenta(),
                 c.getTipoCuenta(),
                 c.getEstado(),
-                c.getDeleted()
+                false
             ))
             .toList();
         
@@ -195,10 +193,6 @@ public class ClienteServiceImpl implements IClienteService {
                 "Cliente no encontrado con ID: " + id
             ));
         
-        if (cliente.getDeleted()) {
-            throw new BusinessException("No se puede activar un cliente eliminado");
-        }
-        
         // Validar que las cuentas pertenecen al cliente
         List<Cuenta> todasLasCuentas = cuentaRepository.findByClienteId(id);
         List<Long> cuentasDelCliente = todasLasCuentas.stream()
@@ -215,10 +209,6 @@ public class ClienteServiceImpl implements IClienteService {
         for (Long cuentaId : request.cuentasIds()) {
             Cuenta cuenta = cuentaRepository.findById(cuentaId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuenta no encontrada con ID: " + cuentaId));
-            
-            if (cuenta.getDeleted()) {
-                throw new BusinessException("No se puede activar la cuenta " + cuenta.getNumeroCuenta() + " porque está eliminada");
-            }
             
             // Solo activar si está inactiva
             if (!cuenta.getEstado()) {

@@ -38,9 +38,6 @@ public class Cuenta {
     @Column(nullable = false)
     private Boolean estado = true;
 
-    @Column(nullable = false)
-    private Boolean deleted = false;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
@@ -127,14 +124,6 @@ public class Cuenta {
 
     public void setEstado(Boolean estado) {
         this.estado = estado;
-    }
-
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
     }
 
     public Cliente getCliente() {

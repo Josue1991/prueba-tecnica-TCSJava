@@ -12,7 +12,6 @@ public class ClienteResponseDTO {
     private String direccion;
     private String telefono;
     private Boolean estado;
-    private Boolean deleted;
     private LocalDateTime createdAt;
 
     public ClienteResponseDTO() {
@@ -20,7 +19,7 @@ public class ClienteResponseDTO {
 
     public ClienteResponseDTO(Long id, String nombre, String genero, Integer edad, 
                              String identificacion, String direccion, String telefono, 
-                             Boolean estado, Boolean deleted, LocalDateTime createdAt) {
+                             Boolean estado, LocalDateTime createdAt) {
         this.id = id;
         this.nombre = nombre;
         this.genero = genero;
@@ -29,7 +28,6 @@ public class ClienteResponseDTO {
         this.direccion = direccion;
         this.telefono = telefono;
         this.estado = estado;
-        this.deleted = deleted;
         this.createdAt = createdAt;
     }
 
@@ -95,14 +93,6 @@ public class ClienteResponseDTO {
 
     public void setEstado(Boolean estado) {
         this.estado = estado;
-    }
-
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
     }
 
     public LocalDateTime getCreatedAt() {

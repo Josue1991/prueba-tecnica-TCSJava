@@ -50,7 +50,6 @@ public class CuentaMapper {
             clienteId,
             nombreCliente,
             entity.getEstado(),
-            entity.getDeleted(),
             entity.getCreatedAt()
         );
     }

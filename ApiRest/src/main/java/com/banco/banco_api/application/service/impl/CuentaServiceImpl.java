@@ -151,10 +151,6 @@ public class CuentaServiceImpl implements ICuentaService {
                 "Cuenta no encontrada con ID: " + id
             ));
         
-        if (cuenta.getDeleted()) {
-            throw new BusinessException("No se puede desactivar una cuenta eliminada");
-        }
-        
         if (!cuenta.getEstado()) {
             throw new BusinessException("La cuenta ya está desactivada");
         }
@@ -176,10 +172,6 @@ public class CuentaServiceImpl implements ICuentaService {
             .orElseThrow(() -> new ResourceNotFoundException(
                 "Cuenta no encontrada con ID: " + id
             ));
-        
-        if (cuenta.getDeleted()) {
-            throw new BusinessException("No se puede activar una cuenta eliminada");
-        }
         
         if (cuenta.getEstado()) {
             throw new BusinessException("La cuenta ya está activa");

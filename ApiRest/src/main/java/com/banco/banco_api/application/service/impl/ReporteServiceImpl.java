@@ -16,6 +16,7 @@ import com.banco.banco_api.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -162,7 +163,6 @@ public class ReporteServiceImpl implements IReporteService {
         List<Cuenta> todasLasCuentas = cuentaRepository.findAll();
         
         List<ReporteCuentasDTO.CuentaResumen> cuentasResumen = todasLasCuentas.stream()
-            .filter(c -> !c.getDeleted()) // Solo cuentas no eliminadas
             .map(cuenta -> {
                 List<Movimiento> movimientosCuenta = movimientosPorCuenta.getOrDefault(
                     cuenta.getId(), 
@@ -193,11 +193,36 @@ public class ReporteServiceImpl implements IReporteService {
     
     // Método helper para convertir Movimiento a DTO
     private MovimientosResponseDTO convertirMovimientoADTO(Movimiento movimiento) {
+        Cuenta cuenta = movimiento.getCuenta();
+        String nombreCliente = cuenta.getCliente().getNombre();
+        
+        // Calcular saldo anterior basado en el tipo de movimiento
+        BigDecimal saldoAnterior;
+        BigDecimal saldoActual = movimiento.getSaldo();
+        BigDecimal valor = movimiento.getValor();
+        
+        switch (movimiento.getTipoMovimiento()) {
+            case DEPOSITO:
+                saldoAnterior = saldoActual.subtract(valor);
+                break;
+            case RETIRO:
+                saldoAnterior = saldoActual.add(valor);
+                break;
+            case ACTIVAR:
+            case DESACTIVAR:
+            default:
+                saldoAnterior = saldoActual;
+                break;
+        }
+        
         return new MovimientosResponseDTO(
             movimiento.getId(),
-            movimiento.getCuenta().getId(),
+            cuenta.getId(),
+            cuenta.getNumeroCuenta(),
+            nombreCliente,
             movimiento.getTipoMovimiento().name(),
             movimiento.getValor(),
+            saldoAnterior,
             movimiento.getSaldo(),
             movimiento.getFechaMovimiento(),
             movimiento.getCreatedAt()

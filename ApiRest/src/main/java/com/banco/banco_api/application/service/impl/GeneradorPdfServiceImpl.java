@@ -70,9 +70,9 @@ public class GeneradorPdfServiceImpl implements IGeneradorPdfService {
                     // Filas de datos
                     for (MovimientosResponseDTO mov : cuenta.movimientos()) {
                         table.addCell(mov.fechaMovimiento().format(DATETIME_FORMATTER));
-                        table.addCell(mov.tipoMovimiento());
+                        table.addCell(mov.tipo());
                         table.addCell("$" + mov.valor());
-                        table.addCell("$" + mov.saldo());
+                        table.addCell("$" + mov.saldoNuevo());
                         table.addCell(String.valueOf(mov.id()));
                     }
 
@@ -132,9 +132,9 @@ public class GeneradorPdfServiceImpl implements IGeneradorPdfService {
                 // Filas de datos
                 for (MovimientosResponseDTO mov : reporte.movimientos()) {
                     table.addCell(mov.fechaMovimiento().format(DATETIME_FORMATTER));
-                    table.addCell(mov.tipoMovimiento());
+                    table.addCell(mov.tipo());
                     table.addCell("$" + mov.valor());
-                    table.addCell("$" + mov.saldo());
+                    table.addCell("$" + mov.saldoNuevo());
                     table.addCell(String.valueOf(mov.id()));
                 }
 

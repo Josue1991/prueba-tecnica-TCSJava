@@ -76,9 +76,9 @@ public class GeneradorExcelServiceImpl implements IGeneradorExcelService {
                 for (MovimientosResponseDTO mov : cuenta.movimientos()) {
                     Row dataRow = cuentaSheet.createRow(cuentaRowNum++);
                     dataRow.createCell(0).setCellValue(mov.fechaMovimiento().format(DATETIME_FORMATTER));
-                    dataRow.createCell(1).setCellValue(mov.tipoMovimiento());
+                    dataRow.createCell(1).setCellValue(mov.tipo());
                     dataRow.createCell(2).setCellValue(mov.valor().doubleValue());
-                    dataRow.createCell(3).setCellValue(mov.saldo().doubleValue());
+                    dataRow.createCell(3).setCellValue(mov.saldoNuevo().doubleValue());
                     dataRow.createCell(4).setCellValue(mov.id());
                 }
                 
@@ -144,9 +144,9 @@ public class GeneradorExcelServiceImpl implements IGeneradorExcelService {
             for (MovimientosResponseDTO mov : reporte.movimientos()) {
                 Row dataRow = sheet.createRow(rowNum++);
                 dataRow.createCell(0).setCellValue(mov.fechaMovimiento().format(DATETIME_FORMATTER));
-                dataRow.createCell(1).setCellValue(mov.tipoMovimiento());
+                dataRow.createCell(1).setCellValue(mov.tipo());
                 dataRow.createCell(2).setCellValue(mov.valor().doubleValue());
-                dataRow.createCell(3).setCellValue(mov.saldo().doubleValue());
+                dataRow.createCell(3).setCellValue(mov.saldoNuevo().doubleValue());
                 dataRow.createCell(4).setCellValue(mov.id());
             }
             

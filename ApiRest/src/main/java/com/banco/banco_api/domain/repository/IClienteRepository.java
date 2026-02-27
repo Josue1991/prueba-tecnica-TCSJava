@@ -15,7 +15,5 @@ public interface IClienteRepository extends JpaRepository<Cliente, Long> {
 
     List<Cliente> findByEstadoTrue();
 
-    List<Cliente> findByDeletedFalse();
-
     boolean existsByIdentificacion(String identificacion);
 }

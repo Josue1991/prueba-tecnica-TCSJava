@@ -16,7 +16,9 @@ import com.banco.banco_api.infrastructure.exception.BusinessException;
 import com.banco.banco_api.infrastructure.exception.ResourceNotFoundException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,10 +37,8 @@ public class MovimientoService implements IMovimientoService {
         Cuenta cuenta = cuentaRepository.findById(request.cuentaId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cuenta no encontrada con ID: " + request.cuentaId()));
 
-        // Validar cuenta eliminada
-        if (cuenta.getDeleted()) {
-            throw new BusinessException("La cuenta está eliminada y no puede realizar operaciones");
-        }
+        // Guardar saldo anterior
+        BigDecimal saldoAnterior = cuenta.getSaldoActual();
 
         // Validar estado según tipo de movimiento
         if (!cuenta.getEstado() && request.tipoMovimiento() != TipoMovimiento.ACTIVAR) {
@@ -99,32 +99,92 @@ public class MovimientoService implements IMovimientoService {
         // Guardar el movimiento
         Movimiento movimientoGuardado = movimientoRepository.save(movimiento);
         
-        return new MovimientosResponseDTO(
-            movimientoGuardado.getId(),
-            movimientoGuardado.getCuenta().getId(),
-            movimientoGuardado.getTipoMovimiento().name(),
-            movimientoGuardado.getValor(),
-            movimientoGuardado.getSaldo(),
-            movimientoGuardado.getFechaMovimiento(),
-            movimientoGuardado.getCreatedAt()
-        );
+        return mapToDTO(movimientoGuardado, saldoAnterior);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<MovimientosResponseDTO> obtenerTodosLosMovimientos() {
+        List<Movimiento> movimientos = movimientoRepository.findAllOrdered();
+        return convertirListaMovimientos(movimientos);
     }
     
     @Override
     @Transactional(readOnly = true)
     public List<MovimientosResponseDTO> obtenerMovimientosPorCuenta(Long cuentaId) {
         List<Movimiento> movimientos = movimientoRepository.findByCuentaId(cuentaId);
-        
+        return convertirListaMovimientos(movimientos);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MovimientosResponseDTO> obtenerMovimientosPorCliente(Long clienteId) {
+        List<Movimiento> movimientos = movimientoRepository.findByCuentaClienteId(clienteId);
+        return convertirListaMovimientos(movimientos);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MovimientosResponseDTO> obtenerMovimientosPorCuentaYFechas(Long cuentaId, LocalDate fechaInicio, LocalDate fechaFin) {
+        LocalDateTime inicio = fechaInicio.atStartOfDay();
+        LocalDateTime fin = fechaFin.atTime(LocalTime.MAX);
+        List<Movimiento> movimientos = movimientoRepository.findByCuentaIdAndFechaMovimientoBetween(cuentaId, inicio, fin);
+        return convertirListaMovimientos(movimientos);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MovimientosResponseDTO> obtenerMovimientosPorClienteYFechas(Long clienteId, LocalDate fechaInicio, LocalDate fechaFin) {
+        LocalDateTime inicio = fechaInicio.atStartOfDay();
+        LocalDateTime fin = fechaFin.atTime(LocalTime.MAX);
+        List<Movimiento> movimientos = movimientoRepository.findByClienteIdAndFechaMovimientoBetween(clienteId, inicio, fin);
+        return convertirListaMovimientos(movimientos);
+    }
+
+    // Método helper para convertir lista de movimientos con cálculo de saldo anterior
+    private List<MovimientosResponseDTO> convertirListaMovimientos(List<Movimiento> movimientos) {
         return movimientos.stream()
-            .map(m -> new MovimientosResponseDTO(
-                m.getId(),
-                m.getCuenta().getId(),
-                m.getTipoMovimiento().name(),
-                m.getValor(),
-                m.getSaldo(),
-                m.getFechaMovimiento(),
-                m.getCreatedAt()
-            ))
+            .map(m -> {
+                // Calcular saldo anterior: saldo actual - valor del movimiento
+                BigDecimal saldoAnterior = calcularSaldoAnterior(m);
+                return mapToDTO(m, saldoAnterior);
+            })
             .collect(Collectors.toList());
+    }
+
+    // Calcular el saldo anterior basado en el tipo de movimiento
+    private BigDecimal calcularSaldoAnterior(Movimiento movimiento) {
+        BigDecimal saldoActual = movimiento.getSaldo();
+        BigDecimal valor = movimiento.getValor();
+        
+        switch (movimiento.getTipoMovimiento()) {
+            case DEPOSITO:
+                return saldoActual.subtract(valor);
+            case RETIRO:
+                return saldoActual.add(valor);
+            case ACTIVAR:
+            case DESACTIVAR:
+            default:
+                return saldoActual;
+        }
+    }
+
+    // Método helper para mapear Movimiento a DTO
+    private MovimientosResponseDTO mapToDTO(Movimiento movimiento, BigDecimal saldoAnterior) {
+        Cuenta cuenta = movimiento.getCuenta();
+        String nombreCliente = cuenta.getCliente().getNombre();
+        
+        return new MovimientosResponseDTO(
+            movimiento.getId(),
+            cuenta.getId(),
+            cuenta.getNumeroCuenta(),
+            nombreCliente,
+            movimiento.getTipoMovimiento().name(),
+            movimiento.getValor(),
+            saldoAnterior,
+            movimiento.getSaldo(),
+            movimiento.getFechaMovimiento(),
+            movimiento.getCreatedAt()
+        );
     }
 }

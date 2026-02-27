@@ -13,7 +13,6 @@ public class CuentaResponseDTO {
     private Long clienteId;
     private String nombreCliente;
     private Boolean estado;
-    private Boolean deleted;
     private LocalDateTime createdAt;
 
     public CuentaResponseDTO() {
@@ -21,7 +20,7 @@ public class CuentaResponseDTO {
 
     public CuentaResponseDTO(Long id, String numeroCuenta, String tipoCuenta, 
                             BigDecimal saldoInicial, BigDecimal saldoActual, Long clienteId, 
-                            String nombreCliente, Boolean estado, Boolean deleted, LocalDateTime createdAt) {
+                            String nombreCliente, Boolean estado, LocalDateTime createdAt) {
         this.id = id;
         this.numeroCuenta = numeroCuenta;
         this.tipoCuenta = tipoCuenta;
@@ -30,7 +29,6 @@ public class CuentaResponseDTO {
         this.clienteId = clienteId;
         this.nombreCliente = nombreCliente;
         this.estado = estado;
-        this.deleted = deleted;
         this.createdAt = createdAt;
     }
 
@@ -96,14 +94,6 @@ public class CuentaResponseDTO {
 
     public void setEstado(Boolean estado) {
         this.estado = estado;
-    }
-
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
     }
 
     public LocalDateTime getCreatedAt() {

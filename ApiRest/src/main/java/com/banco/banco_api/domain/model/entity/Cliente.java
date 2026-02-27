@@ -13,9 +13,6 @@ public class Cliente extends Persona {
     @Column(nullable = false)
     private Boolean estado = true;
 
-    @Column(nullable = false)
-    private Boolean deleted = false;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -52,14 +49,6 @@ public class Cliente extends Persona {
         this.estado = estado;
     }
 
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
-
     @Override
     public LocalDateTime getCreatedAt() {
         return createdAt;
@@ -72,7 +61,6 @@ public class Cliente extends Persona {
                 ", nombre='" + getNombre() + '\'' +
                 ", identificacion='" + getIdentificacion() + '\'' +
                 ", estado=" + estado +
-                ", deleted=" + deleted +
                 '}';
     }
 }
